@@ -30,5 +30,4 @@ RUN make -C storedproc/pgsql/c install
 WORKDIR /var/lib/postgresql/
 USER postgres
 RUN PATH=$PATH:/usr/lib/postgresql/9.3/bin/ && . /osdldbt-dbt2/examples/dbt2_profile && dbt2-pgsql-build-db -w 1
-VOLUME /tmp/run
-CMD PATH=$PATH:/usr/lib/postgresql/9.3/bin/ && . /osdldbt-dbt2/examples/dbt2_profile && dbt2-run-workload -a pgsql -d 300 -w 1 -o /tmp/run/result -c 10
+CMD PATH=$PATH:/usr/lib/postgresql/9.3/bin/ && . /osdldbt-dbt2/examples/dbt2_profile && dbt2-run-workload -a pgsql -d 300 -w 1 -o /tmp/result -c 10
