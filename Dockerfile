@@ -7,3 +7,4 @@ COPY . osdldbt-dbt2
 WORKDIR osdldbt-dbt2
 RUN cmake -DDBMS=$DDBMS -DDESTDIR=/usr/local
 RUN make
+RUN make install
