@@ -1,7 +1,7 @@
 FROM ubuntu
 # DDBMS=<drizzle|mysql|pgsql|sapdb>
 ENV DDBMS=pgsql
-ENV PACKAGES_DEPENDENCIES='build-essential cmake postgresql libpq-dev postgresql-server-dev-9.3'
+ENV PACKAGES_DEPENDENCIES='build-essential cmake postgresql libpq-dev postgresql-server-dev-9.3 r-base'
 RUN apt-get update && apt-get install -y $PACKAGES_DEPENDENCIES
 # COPY . /osdldbt-dbt2
 COPY CMakeLists.txt /osdldbt-dbt2/CMakeLists.txt
@@ -28,6 +28,6 @@ RUN make install
 RUN make -C storedproc/pgsql/c
 RUN make -C storedproc/pgsql/c install
 WORKDIR /var/lib/postgresql/
+COPY docker-entrypoint.sh /docker-entrypoint.sh
 USER postgres
-RUN PATH=$PATH:/usr/lib/postgresql/9.3/bin/ && . /osdldbt-dbt2/examples/dbt2_profile && dbt2-pgsql-build-db -w 1
-CMD PATH=$PATH:/usr/lib/postgresql/9.3/bin/ && . /osdldbt-dbt2/examples/dbt2_profile && dbt2-run-workload -a pgsql -d 300 -w 1 -o /tmp/result -c 10
+ENTRYPOINT ["/docker-entrypoint.sh"]
