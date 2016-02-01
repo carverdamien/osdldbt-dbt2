@@ -31,3 +31,4 @@ WORKDIR /var/lib/postgresql/
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 USER postgres
 ENTRYPOINT ["/docker-entrypoint.sh"]
+ENV WAREHOUSES 1
