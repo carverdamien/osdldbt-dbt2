@@ -36,3 +36,4 @@ ENV DURATION 300
 ENV SLEEP 1
 # VOLUME /var/lib/postgresql/local/
 # VOLUME /tmp
+CMD [""]
