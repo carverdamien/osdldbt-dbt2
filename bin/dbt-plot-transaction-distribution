@@ -1,0 +1,47 @@
+#!/bin/sh
+#
+# This file is released under the terms of the Artistic License.
+# Please see the file LICENSE, included in this package, for details.
+#
+# Copyright (C) 2010-2014 Mark Wong
+#               2014      2ndQuadrant, Ltd.
+#
+
+TXN_NAME=$1
+TXN_TAG=$2
+MIXLOG=$3
+OUTPUTDIR=$4
+COLOR=$5
+
+mkdir -p ${OUTPUTDIR}
+if [ ! -d "${OUTPUTDIR}" ]; then
+	echo "Failed to create directory ${OUTPUTDIR}"
+	exit 1
+fi
+
+R --slave --no-save << __EOF__
+df <- read.csv("${MIXLOG}", header=F)
+colnames(df)[1] <- 'ctime'
+colnames(df)[2] <- 'txn'
+colnames(df)[4] <- 'response'
+
+# This will generate color options for markers in the mix log, manually
+# compendate.
+color <- rainbow(length(unique(df\$txn)) - 2)
+
+df <- subset(df, df\$txn == "${TXN_TAG}")
+
+# Convert ctime to elapsed time in minutes
+starttime = df[1,]\$ctime
+df\$ctime <- (df\$ctime - starttime) / 60
+
+bitmap("${OUTPUTDIR}/t${TXN_TAG}-distribution.png",
+       type="png16m", units="px", width=1280, height=800, res=150, taa=4,
+       gaa=4)
+plot(df\$ctime, df\$response,  xlim=c(0, max(df\$ctime)),
+     ylim=c(0, max(df\$response)), type = "p", col = color[${COLOR}],
+     main="${TXN_NAME} Transaction Response Time Distribution",
+     xlab="Elapsed Time (minutes)", ylab="Response Time (seconds)")
+grid(col="gray")
+invisible(dev.off())
+__EOF__
