@@ -1,7 +1,7 @@
 FROM ubuntu
 # DDBMS=<drizzle|mysql|pgsql|sapdb>
 ENV DDBMS=pgsql
-ENV PACKAGES_DEPENDENCIES='build-essential cmake postgresql libpq-dev postgresql-server-dev-9.3 r-base'
+ENV PACKAGES_DEPENDENCIES='build-essential cmake postgresql libpq-dev postgresql-server-dev-9.3 r-base ghostscript'
 RUN apt-get update && apt-get install -y $PACKAGES_DEPENDENCIES
 # COPY . /osdldbt-dbt2
 COPY CMakeLists.txt /osdldbt-dbt2/CMakeLists.txt

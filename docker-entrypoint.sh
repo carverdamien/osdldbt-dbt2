@@ -14,8 +14,14 @@ run()
     sleep ${SLEEP}
 }
 
+report()
+{
+    dbt2-generate-report -i /tmp/result
+}
+
 case $1 in
     init) init;;
     run) run;;
-    *) init; run;;
+    report) report;;
+    *) init; run; report;;
 esac
