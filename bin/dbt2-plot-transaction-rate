@@ -58,7 +58,7 @@ for (i in 1:5) {
   dfsub\$count <- cumsum(dfsub[]\$count)
   plot(dfsub\$ctime, dfsub\$count,  xlim=c(0, max(dfsub\$ctime)),
        ylim=c(0, max(dfsub\$count)), type = "b", col = color[i],
-       main=paste(txn_name[i], " Transaction Rate", sep=""),
+       main=paste("Cumulative ", txn_name[i], " Transaction", sep=""),
        xlab="Elapsed Time (minutes)", ylab="Cumulative Transactions")
   grid(col="gray")
   invisible(dev.off())
