@@ -51,5 +51,16 @@ for (i in 1:5) {
        xlab="Elapsed Time (minutes)", ylab="Transactions per Minute")
   grid(col="gray")
   invisible(dev.off())
+  bitmap(paste("${OUTPUTDIR}/", "sumcum-", txn[i], "-transaction-rate.png", sep = ""),
+         type="png16m", units="px", width=1280, height=800, res=150, taa=4,
+         gaa=4)
+  dfsub <- subset(df, df\$txn == txn[i])
+  dfsub\$count <- cumsum(dfsub[]\$count)
+  plot(dfsub\$ctime, dfsub\$count,  xlim=c(0, max(dfsub\$ctime)),
+       ylim=c(0, max(dfsub\$count)), type = "b", col = color[i],
+       main=paste(txn_name[i], " Transaction Rate", sep=""),
+       xlab="Elapsed Time (minutes)", ylab="Cumulative Transactions")
+  grid(col="gray")
+  invisible(dev.off())
 }
 __EOF__
