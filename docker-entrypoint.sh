@@ -31,10 +31,10 @@ synchronous_commit"}
 : ${bgwriter_lru_multiplier:=2.0}
 
 # TODO
-: ${checkpoint_segments:=128}
+: ${checkpoint_segments:=64}
 : ${checkpoint_timeout:=10min}
 : ${shared_buffers:=128MB}
-: ${effective_cache_size:=128MB}
+: ${effective_cache_size:=256MB}
 : ${bgwriter_lru_maxpages:=100}
 : ${synchronous_commit:=on}
 
