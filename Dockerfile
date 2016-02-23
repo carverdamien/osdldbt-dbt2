@@ -33,6 +33,7 @@ USER postgres
 ENTRYPOINT ["/docker-entrypoint.sh"]
 ENV WAREHOUSES 1
 ENV DURATION 300
+ENV SLEEPY 1000
 # VOLUME /var/lib/postgresql/local/
 # VOLUME /tmp
 CMD [""]

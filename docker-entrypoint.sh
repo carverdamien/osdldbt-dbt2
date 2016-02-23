@@ -59,7 +59,7 @@ init()
 
 run()
 {
-    dbt2-run-workload -a pgsql -d ${DURATION} -w ${WAREHOUSES} -o /tmp/result -c 10
+    dbt2-run-workload -a pgsql -d ${DURATION} -w ${WAREHOUSES} -o /tmp/result -c 10 -s ${SLEEPY}
 }
 
 report()
