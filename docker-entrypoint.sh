@@ -38,6 +38,9 @@ synchronous_commit"}
 : ${bgwriter_lru_maxpages:=100}
 : ${synchronous_commit:=on}
 
+: ${ANON:=0}
+: ${ANON_AT:=0}
+
 configure_one()
 {
     name=$1
@@ -59,6 +62,7 @@ init()
 
 run()
 {
+    (sleep ${ANON_AT}; /anon ${ANON} 0) &
     dbt2-run-workload -a pgsql -d ${DURATION} -w ${WAREHOUSES} -o /tmp/result -c 10 -s ${SLEEPY}
 }
 
