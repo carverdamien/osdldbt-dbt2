@@ -48,21 +48,21 @@ invisible(dev.off())
 grp <- 10
 start <- head(df\$ctime,n=1)
 end <- tail(df\$ctime,n=1)
-size <- (end - start)/grp + 1
+size <- (end - start) + 1
 pdf <- data.frame(ctime=double(size),percentile=double(size))
 idx <- 1
-for (i in seq(start,end,grp)) {
+for (i in seq(start,end)) {
 subdf <- subset(df,i < ctime & ctime < i + grp)
 pdf\$ctime[idx] <- i + grp/2
 pdf\$percentile[idx] <- quantile(subdf\$response, c(.9))
 idx <- idx + 1
 }
-
+pdf <- subset(pdf, ctime > 20)
 bitmap("${OUTPUTDIR}/p-t${TXN_TAG}-distribution.png",
        type="png16m", units="px", width=1280, height=800, res=150, taa=4,
        gaa=4)
-plot(pdf\$ctime, pdf\$percentile,  xlim=c(0, max(df\$ctime)),
-     ylim=c(0, max(df\$response)), type = "b", col = color[${COLOR}],
+plot(pdf\$ctime, pdf\$percentile,  xlim=c(0, max(pdf\$ctime)),
+     ylim=c(0, max(pdf\$percentile,na.rm=TRUE)), type = "l", col = color[${COLOR}],
      main=paste("${TXN_NAME} Percentile Transaction Response Time per",grp,"minute(s)"),
      xlab="Elapsed Time (minutes)", ylab="Percentile Response Time (seconds)")
 grid(col="gray")
