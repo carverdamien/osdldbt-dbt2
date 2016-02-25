@@ -28,6 +28,8 @@ RUN make install
 RUN make -C storedproc/pgsql/c
 RUN make -C storedproc/pgsql/c install
 WORKDIR /var/lib/postgresql/
+COPY anon.c /anon.c
+RUN gcc -o /anon /anon.c
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 USER postgres
 ENTRYPOINT ["/docker-entrypoint.sh"]
