@@ -43,7 +43,7 @@ fi
 
 simple_request()
 {
-    echo 'SELECT * FROM PG_CATALOG.PG_TABLES;' | psql > /dev/null
+    echo 'SELECT * FROM PG_CATALOG.PG_TABLES;' | psql -p ${DBT2PORT} > /dev/null
 }
 
 until simple_request
