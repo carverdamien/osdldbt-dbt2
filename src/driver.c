@@ -11,6 +11,7 @@
 #include <config.h>
 #endif
 
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -73,6 +74,13 @@ pthread_mutex_t mutex_terminal_state[3][TRANSACTION_MAX] = {
 		PTHREAD_MUTEX_INITIALIZER, PTHREAD_MUTEX_INITIALIZER,
 		PTHREAD_MUTEX_INITIALIZER }
 };
+
+#define SLEEP 0
+#define RUN 1
+#define QUIT 2
+pthread_mutex_t activity_lock = PTHREAD_MUTEX_INITIALIZER;
+int activity_value = RUN;
+pthread_cond_t activity_cond = PTHREAD_COND_INITIALIZER;
 
 int create_pid_file()
 {
@@ -283,6 +291,7 @@ int start_driver()
 {
 	int i, j;
 	struct timespec ts, rem;
+	int breakloop = 0;
 
 	/* Just used to count the number of threads created. */
 	int count = 0;
@@ -390,6 +399,41 @@ int start_driver()
 	fflush(log_mix);
 	pthread_mutex_unlock(&mutex_mix_log);
 
+	{
+		int fd = 0;
+		int flags = fcntl(fd, F_GETFL, 0);
+		fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+		do {
+			char c;
+			int ret;
+			ret = read(fd, &c, sizeof(c));
+			if (ret == -1)
+				sleep(1);
+			else
+				switch(c) {
+				case 'q':
+					pthread_mutex_lock(&activity_lock);
+					activity_value = QUIT;
+					pthread_cond_broadcast(&activity_cond);
+					pthread_mutex_unlock(&activity_lock);
+					breakloop = 1;
+					break;
+				case 'r':
+					pthread_mutex_lock(&activity_lock);
+					activity_value = RUN;
+					pthread_cond_broadcast(&activity_cond);
+					pthread_mutex_unlock(&activity_lock);
+					break;
+				case 'p':
+					pthread_mutex_lock(&activity_lock);
+					activity_value = SLEEP;
+					pthread_mutex_unlock(&activity_lock);
+					break;
+				default:
+					break;
+				}
+		} while(time(NULL) < stop_time && !breakloop);
+	}
 	/* wait until all threads quit */
 	for (i = w_id_min; i < w_id_max + 1; i += spread) {
 		for (j = 0; j < terminals_per_warehouse; j++) {
@@ -434,6 +478,7 @@ void *terminal_worker(void *data)
 	pid_t pid;
 	pthread_t tid;
 	char code;
+	int breakloop = 0;
 
 #ifdef STANDALONE
 	struct db_context_t dbc;
@@ -657,7 +702,13 @@ void *terminal_worker(void *data)
 		pthread_mutex_lock(&mutex_terminal_state[THINKING][client_data.transaction]);
 		--terminal_state[THINKING][client_data.transaction];
 		pthread_mutex_unlock(&mutex_terminal_state[THINKING][client_data.transaction]);
-	} while (time(NULL) < stop_time);
+		pthread_mutex_lock(&activity_lock);
+		while (activity_value == SLEEP)
+			pthread_cond_wait(&activity_cond, &activity_lock);
+		if (activity_value == QUIT)
+			breakloop = 1;
+		pthread_mutex_unlock(&activity_lock);
+	} while (time(NULL) < stop_time && !breakloop);
 
 #ifdef STANDALONE
 	/*recycle_node(node);*/
