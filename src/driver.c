@@ -122,7 +122,7 @@ int init_driver_logging()
 	char log_filename[1024];
 
 	sprintf(log_filename, "%s%s", output_path, MIX_LOG_NAME);
-	log_mix = fopen(log_filename, "w");
+	log_mix = fopen(log_filename, "a");
 	if (log_mix == NULL) {
 		fprintf(stderr, "cannot open %s\n", log_filename);
 		return ERROR;
