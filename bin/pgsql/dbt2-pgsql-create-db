@@ -49,8 +49,6 @@ sleep 4
 
 if [ ! "x${PORT}" = "x" ]; then
     PORTOPT="-p ${PORT}"
-else
-	PORTOPT=${DBT2PORT}
 fi
 
 createdb ${PORTOPT} ${DBT2DBNAME} || exit 1
