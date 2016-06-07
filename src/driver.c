@@ -412,6 +412,7 @@ int start_driver()
 			else
 				switch(c) {
 				case 'q':
+					printf("Quitting\n");
 					pthread_mutex_lock(&activity_lock);
 					activity_value = QUIT;
 					pthread_cond_broadcast(&activity_cond);
@@ -419,12 +420,14 @@ int start_driver()
 					breakloop = 1;
 					break;
 				case 'r':
+					printf("Resuming\n");
 					pthread_mutex_lock(&activity_lock);
 					activity_value = RUN;
 					pthread_cond_broadcast(&activity_cond);
 					pthread_mutex_unlock(&activity_lock);
 					break;
 				case 'p':
+					printf("Pausing\n");
 					pthread_mutex_lock(&activity_lock);
 					activity_value = SLEEP;
 					pthread_mutex_unlock(&activity_lock);
