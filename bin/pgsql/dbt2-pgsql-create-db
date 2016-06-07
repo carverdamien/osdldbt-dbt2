@@ -36,6 +36,8 @@ else
 	initdb -D ${DBT2PGDATA} --locale=C || exit 1
 fi
 
+sed -i "s/^#port =.*/port = ${DBT2PORT}/" ${DBT2PGDATA}/postgresql.conf
+
 if [ ! "x${PARAMETERS}" = "x" ]; then
     PARAMOPT="-p ${PARAMETERS}"
 fi
