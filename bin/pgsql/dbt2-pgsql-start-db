@@ -12,7 +12,7 @@ if [ -z ${DBT2PGDATA} ]; then
 	exit 1
 fi
 
-LOGFILE="$(basename ${DBT2PGDATA}).log"
+LOGFILE="${DBT2DBNAME:=dbt2}.log"
 OUTDIR="."
 while getopts "fo:p:" OPT; do
 	case ${OPT} in
